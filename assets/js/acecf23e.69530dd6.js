@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkchess_dev=self.webpackChunkchess_dev||[]).push([[1903],{1912:s=>{s.exports=JSON.parse('{"blogBasePath":"/ChessDev/blog","blogTitle":"Blog","authorsListPath":"/ChessDev/blog/authors"}')}}]);

@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkchess_dev=self.webpackChunkchess_dev||[]).push([[5642],{86:e=>{e.exports=JSON.parse('{"metadata":{"permalink":"/ChessDev/blog","page":1,"postsPerPage":10,"totalPages":1,"totalCount":4,"blogDescription":"Blog","blogTitle":"Blog"}}')}}]);

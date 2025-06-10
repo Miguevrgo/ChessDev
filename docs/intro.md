@@ -2,46 +2,22 @@
 sidebar_position: 1
 ---
 
-# Tutorial Intro
+# Introduction
 
-Let's discover **Docusaurus in less than 5 minutes**.
+Welcome to **ChessDev**, an open-source technical wiki dedicated to chess engine development. This resource aims to provide a comprehensive and accessible platform for learning chess programming techniques, serving both beginners and experienced developers looking to enhance their own engines, such as **Oxide**.
 
-## Getting Started
+## Acknowledgments
 
-Get started by **creating a new site**.
+The creation of this wiki owes much to the following resources and communities:
 
-Or **try Docusaurus immediately** with **[docusaurus.new](https://docusaurus.new)**.
+- **[ChessProgramming Wiki](https://www.chessprogramming.org/)**: A foundational source of knowledge during the development of Oxide. While its depth on individual topics may vary, it has been an invaluable reference for many, including myself, on this journey.
+- **[Sebastian Lague](https://www.youtube.com/c/SebastianLague)**: His insightful and engaging video tutorials have brilliantly elucidated key chess programming concepts, making complex topics approachable and entertaining.
+- **Open-Source Chess Engines**: Projects like Stockfish, Carp, Akimbo, Berserk, and others have generously shared their code, offering real-world examples of advanced techniques that inspire and guide the community.
 
-### What you'll need
+## Purpose and Scope
 
-- [Node.js](https://nodejs.org/en/download/) version 18.0 or above:
-  - When installing Node.js, you are recommended to check all checkboxes related to dependencies.
+ChessDev seeks to build upon these resources by providing detailed documentation, code examples, and practical guides tailored to the development of **Oxide** and similar engines.
 
-## Generate a new site
+## Collaboration
 
-Generate a new Docusaurus site using the **classic template**.
-
-The classic template will automatically be added to your project after you run the command:
-
-```bash
-npm init docusaurus@latest my-website classic
-```
-
-You can type this command into Command Prompt, Powershell, Terminal, or any other integrated terminal of your code editor.
-
-The command also installs all necessary dependencies you need to run Docusaurus.
-
-## Start your site
-
-Run the development server:
-
-```bash
-cd my-website
-npm run start
-```
-
-The `cd` command changes the directory you're working with. In order to work with your newly created Docusaurus site, you'll need to navigate the terminal there.
-
-The `npm run start` command builds your website locally and serves it through a development server, ready for you to view at http://localhost:3000/.
-
-Open `docs/intro.md` (this page) and edit some lines: the site **reloads automatically** and displays your changes.
+ChessDev is a non-profit, freely accessible resource hosted on GitHub, committed to remaining open and available to all. Contributions are warmly encouraged, whether it’s correcting existing content, adding new topics, translating the wiki, or providing code examples in other programming languages (e.g., beyond Rust/C++). Together, we can create a supportive community, guiding newcomers along a rewarding path in chess programming. Join us by forking the repository at [https://github.com/Miguevrgo/ChessDev](https://github.com/Miguevrgo/ChessDev) and submitting pull requests!

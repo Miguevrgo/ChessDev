@@ -1,8 +1,8 @@
 {
-  "label": "Tutorial - Basics",
+  "label": "Getting Started",
   "position": 2,
   "link": {
     "type": "generated-index",
-    "description": "5 minutes to learn the most important Docusaurus concepts."
+    "description": "Great! You are going to start a journey into a world of learning and fun. There is some work to do, but we'll stay close together. In order to have a chess engine working, you first have to implement a solid foundation for the rules and mechanics of the game. In this section, we will go from scratch to an efficient working chess game, explaining various techniques and alternatives along the way. Let's start from the pieces:"
   }
 }

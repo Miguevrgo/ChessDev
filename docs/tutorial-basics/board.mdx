@@ -1,0 +1,76 @@
+---
+sidebar_position: 1
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Board Representation
+
+When developing a chess program, an internal board representation is crucial. It's not just for enforcing game rules during play, but also for enabling the search algorithm to simulate moves. There are various approaches we'll discuss, but for now, we'll preview one key point: simply using a matrix of pieces isn't enough.
+
+We also have to account for some information about the game such as the side to move, castling and en passant rights, etc. There are also lots of different chess board implementations within the same techniques we are going to see. It is up to the programmer to design their own approach with the data considered to make it faster while maintaining reliability or ease of use.
+
+We'll now discuss some of the board representations, going first through bitboards which are the recommended way that almost all computer chess engines follow. If you don't yet understand why it's better, you can try experimenting with your own approach — it may even be better! However, if you just want something really good out of the box, trust the way, and we'll see together why it's a good idea, even if it's not the most space-efficient approach.
+
+## Pieces
+
+There are various ways to represent the pieces. It also depends on the programming language used. We will not go too much in depth on whether one design is better than another, because there are lots of alternatives each with their own advantages.
+
+One thing to consider: try to make piece representations branchless and space-efficient when possible. We want to access piece types quite frequently. Although it's not the main bottleneck, we don't recommend an OOP approach with an inherited class for each type of piece.
+
+There are 6 different types of pieces for each side, so 12 in total. Since one piece only occupies one square at a time, a Nil-piece aka empty square can be useful. For cheaper design, most engines prefer encoding the piece type and color as separate variables. The most straightforward way is using an enumeration.
+
+### Enumeration
+
+Enumerating piece types is fine. We often order them from least valuable to most. Here's an example in C++ and Rust:
+
+<Tabs>
+<TabItem value="C++" label="C++">
+
+```cpp
+enum PieceType {
+    EMPTY, PAWN, KNIGHT, BISHOP, ROOK, QUEEN, KING,
+}
+
+enum Color {
+    WHITE = 0
+    BLACK = 1
+}
+
+struct Piece {
+    PieceType type;
+    Color color;
+}
+```
+
+</TabItem>
+<TabItem value="rust" label="Rust">
+
+```rust
+#[derive(Copy, Clone, PartialEq, Eq)]
+pub enum PieceType {
+    None,
+    Pawn,
+    Knight,
+    Bishop,
+    Rook,
+    Queen,
+    King,
+}
+
+#[derive(Copy, Clone, PartialEq, Eq)]
+pub enum Color {
+    White,
+    Black,
+}
+
+#[derive(Copy, Clone)]
+pub struct Piece {
+    pub piece_type: PieceType,
+    pub color: Color,
+}
+```
+
+</TabItem>
+</Tabs>

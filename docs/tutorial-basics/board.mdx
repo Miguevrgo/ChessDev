@@ -28,7 +28,7 @@ Enumerating piece types is fine. We often order them from least valuable to most
 <Tabs>
 <TabItem value="C++" label="C++">
 
-```cpp
+```cpp showLineNumbers
 enum PieceType {
     EMPTY, PAWN, KNIGHT, BISHOP, ROOK, QUEEN, KING,
 }
@@ -47,7 +47,7 @@ struct Piece {
 </TabItem>
 <TabItem value="rust" label="Rust">
 
-```rust
+```rust showLineNumbers
 #[derive(Copy, Clone, PartialEq, Eq)]
 pub enum PieceType {
     None,
@@ -74,3 +74,40 @@ pub struct Piece {
 
 </TabItem>
 </Tabs>
+
+## Square
+
+A square in chess refers to one of the 64 cells on a standard 8×8 board. Each square may be empty or occupied by a piece. In algebraic notation, squares are named using file (columns a to h) and rank (rows 1 to 8), such as e4 or a1.
+
+Internally, it's common to number squares from 0 to 63. The most popular indexing scheme for bitboards is Little-Endian Rank-File (LERF) mapping, where:
+
+- Square a1 is index 0 (LSB)
+- Square h1 is index 7
+- Square a2 is index 8
+- ...
+- Square h8 is index 63 (MSB)
+
+This order matches how a 64-bit integer maps directly to the board, from least significant bit (LSB) to most significant bit (MSB), left to right, bottom to top.
+
+A good reference to visualize this mapping: [Bitboard Viewer](https://tearth.dev/bitboard-viewer/)
+
+## Board
+
+### Bitboards
+
+Bitboards are the standard and recommended way of representing a chess board in modern engines. While not the most space-efficient, they enable extremely fast operations using bitwise logic.
+A bitboard is simply a 64-bit integer (`u64` in Rust, `uint64_t` in C++), where each bit corresponds to a square on the board. A bit set to 1 means the square is occupied; 0 means it's empty.
+
+A natural question arises:
+- **How do we know which piece is on each square if a bitboard only tells us if a square is occupied?**
+
+There are multiple strategies:
+- **[8 Bitboards]** One effective and compact approach is to use 8 bitboards in total:
+    - 6 bitboards for each piece type (regardless of color):
+    - 2 bitboards for side occupancy:
+
+    With this setup, you can derive the full board state. For example, to get the bitboard of white pawns: `bitboards[pawn] | bitboards[white]`
+    This design is compact and performant. It avoids redundant storage while still allowing fast queries, however, it is not the only possible
+    approach:
+
+- **[12 Bitboards]**

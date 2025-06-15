@@ -71,8 +71,7 @@ const config: Config = {
         copyright: `Copyright © ${new Date().getFullYear()} ChessDev. Built with Docusaurus.`,
     },
     prism: {
-      theme: prismThemes.github,
-      darkTheme: prismThemes.dracula,
+      theme: prismThemes.onedark,
       additionalLanguages: ['cpp', 'rust', 'python', 'bash'],
     },
   } satisfies Preset.ThemeConfig,

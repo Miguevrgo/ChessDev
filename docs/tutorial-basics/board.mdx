@@ -110,4 +110,78 @@ There are multiple strategies:
     This design is compact and performant. It avoids redundant storage while still allowing fast queries, however, it is not the only possible
     approach:
 
-- **[12 Bitboards]**
+- **[12 Bitboards]** One bitboard for each piece type and color, additionaly, some engines decide to use another 
+  two bitboards for side occupancy.
+
+- **[Hybrid approach]** Where we use the bitboards for fast operations + array of pieces for easier access for some operations, this involves
+  a bigger size in the end, however, it can prove useful for many of the methods.
+
+Let’s now see how we can implement a basic BitBoard in Rust. We'll define the most common bitboard operations and provide utility methods that are frequently used in chess engines. While there are many valid design choices, the implementation shown below balances clarity, efficiency, and usability.
+**Key Operations:**
+- Get bit: Check whether a square is set.
+- Set bit: Mark a square as occupied.
+- Pop bit: Clear a bit (e.g., when a piece moves).
+- Count bits: Count how many squares are set (e.g., for population count or mobility).
+- LSB: Find the least significant bit set (used for iterating over pieces).
+
+We’ll also define a debug-friendly Display implementation for visualizing the bitboard.
+<Tabs>
+<TabItem value="C++" label="C++">
+
+```cpp showLineNumbers
+```
+
+</TabItem>
+<TabItem value="rust" label="Rust">
+
+```rust showLineNumbers
+struct BitBoard(u64);
+
+impl BitBoard {
+    pub fn get_bit(self, square: Square) -> bool {
+        self.0 & (1u64 << square.index()) != 0
+    }
+
+    pub fn set_bit(self, square: Square) -> Self {
+        Self(self.0 | (1u64 << square.index()))
+    }
+
+    pub fn pop_bit(self, square: Square) -> Self {
+        Self(self.0 & !(1u64 << square.index()))
+    }
+
+    pub fn count_bits(self) -> u32 {
+        self.0.count_ones()
+    }
+
+    pub fn lsb(self) -> Square {
+        Square::new(self.0.trailing_zeros() as usize)
+    }
+}
+
+/// Optional method which can be useful when debugging
+impl std::fmt::Display for BitBoard {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        writeln!(f, "  a b c d e f g h")?;
+        writeln!(f, " ┌────────────────┐")?;
+        for rank in (0..8).rev() {
+            write!(f, "{}│", rank + 1)?;
+            for file in 0..8 {
+                let index = rank * 8 + file;
+                let bit = (self.0 >> index) & 1;
+                write!(f, "{} ", if bit == 1 { "1" } else { "0" })?;
+            }
+            writeln!(f, "│")?;
+        }
+        writeln!(f, " └────────────────┘")
+    }
+}
+```
+
+</TabItem>
+</Tabs>
+
+**Notes**:
+- Square is assumed to be a struct or enum with a method index() -> usize returning its 0–63 index.
+- You can also implement your own version of count_ones (popcount) using techniques like the HAKMEM algorithm or lookup tables, though the built-in version is already highly optimized in modern CPUs.
+- Advanced methods like pop_lsb() (clear and return index) and iteration over bits can also be added as needed.

@@ -21,7 +21,7 @@ function HomepageHeader() {
           <Link
             className="button button--secondary button--lg"
             to="/docs/intro">
-            Chess Wiki for Developers
+            Access 
           </Link>
         </div>
       </div>

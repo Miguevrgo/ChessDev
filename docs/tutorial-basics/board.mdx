@@ -259,7 +259,30 @@ Let's see an example of how we can represent the board state in Rust and C++ and
 <TabItem value="C++" label="C++">
 
 ```cpp showLineNumbers
-#TODO
+struct Board {
+    // We have already seen how we can represent the pieces,
+    // Here we use the 12 bitboards approach
+    std::array<BitBoard, 12> pieces;
+
+    // Now the information about the game
+
+    // Side to move (Color can be an enum {White, Black} or similar)
+    Color side_to_move;
+
+    // Castling rights stored in a compact way, using an u8 is fine for now
+    CastlingRights castling_rights;
+
+    // En passant square, if any
+    std::optional<Square> en_passant_square;
+
+    // Halfmoves
+    // Chess is limited to less than 5900 moves, using 16 bits would be safer
+    // (256 is a reasonable limit for most games but not all)
+    uint8_t halfmoves = 0;
+
+    // Hash (You can ingore this for now, we will see it quite later)
+    ZobristHash hash;
+};
 ```
 
 </TabItem>
@@ -304,7 +327,7 @@ It is very useful to have a way to quickly check which side is to move, it could
 be very handy to have it stored in the board, it also does not take much space, so we can use a simple data type which is able to hold
 two values, such as an enum or a boolean. In the example above, we use an enum `Color` which can be either `White` or `Black`.
 
-### castling_rights
+### CastlingRights
 For us to generate legal moves, we have to follow the standard chess rules, which include castling rights, this includes tracking whether 
 each side can castle kingside or queenside. We can use a simple `u8` to store this information, where each bit represents a castling right, this way, we can list
 the four possible castling rights as follows:
@@ -312,6 +335,7 @@ the four possible castling rights as follows:
 - 0b0010: White can castle queenside
 - 0b0100: Black can castle kingside
 - 0b1000: Black can castle queenside
+
 Using this enconding, we can easily check whether a side can castle kingside, queenside or even both by using bitwise operations. For 
 the real move generation, we will not just check the castling rights, but also the position of the king and rook, and whether the squares between them are empty or not, or if they are attacked by the opponent's pieces.
 However, this is enough for now to represent the castling rights in a compact way, now, as usual, let's see how we can represent this in Rust and C++:
@@ -346,9 +370,19 @@ impl CastlingRights {
 </TabItem>
 </Tabs>
 
+### En Passant
+There is a special rule in chess called en passant, which allows a pawn that has just moved two squares forward from its
+starting position to be captured by an opponent's pawn as if it had only moved one square. To implement this rule, we have to track every time a 
+pawn moves two squares forward, and we can do this by storing the square where the en passant capture can occur.
+
 ### Halfmoves
 In game theory, it is quite common to notate the number of halfmoves made in a game, which means the number of turns made by both players.
-This variable, which is often called `ply` in chess engines,
+This variable, which is often called `ply` in chess engines, represents the number of moves made by both players without a capture or a pawn move.
+It is used to determine whether the 50-move rule applies, which states that if no capture or pawn move has been made in the last 50 moves, the game can be declared a draw.
+
+### Hashing
+We will not go deep into hashing yet as it is not necessary, however, its just a way to identify a board position by a number, this way we can use 
+some advanced techniques such as transposition tables, which allow us to store previously computed positions and avoid recomputing them, we can also use it to detect repetitions and draw conditions.
 
 
 

@@ -1,0 +1,33 @@
+---
+sidebar_position: 2
+---
+
+# Move Generation
+
+If you have completed and read the Board tutorial, you should have a basic understanding of how to represent a chess board and pieces in code. Now, we will implement the move generation logic for our engine.
+There are many different ways to implement move generation, here, we will discuss many and so it is up to you to choose the one that fits your needs best or you understand best.
+
+This implementation heavily depends on the board representation, as it is quite the standard to use bitboards, we will assume you are using them as well, however, if you are not, I hope you can still follow along and adapt the code to your needs.
+Either way, move generation is the part of the board implementation which is going to take the most time while searching, coding, and debugging, so it is important to get it right. We will later discuss how to check whether or not 
+your engine is generating the correct moves, however, if you follow the code examples and the explanations, you should be able to implement a working move generation logic.
+
+## Legality
+
+There are two main approaches to move generation: generating all legal moves and generating pseudo-legal moves for later check.
+
+### Pseudo-legal moves
+In pseudo-legal move generation, we generate all moves which are possible according to the movement rules of each piece,
+without checking whether or not the move would leave the king in check. This is the most common approach and is usually faster
+than generating legal moves, as it does not require checking for checks after each move.
+
+### Legal moves
+In legal move generation, we generate only moves which do not leave the king in check.
+This is usually slower than generating pseudo-legal moves, as it requires checking for checks after each move.
+
+Either way, pins, en passant and castling will be the hardests parts to get right.
+
+## Standard moves
+There are some standard moves which really do not require much explanation or advanced techniques to implement, the difficulty lies in the 
+special moves described above and the performance of the generation heavily lies in the implementation of sliding pieces attacks, we will 
+focus this section on these kinds of moves but first, we will cover the standard moves.
+

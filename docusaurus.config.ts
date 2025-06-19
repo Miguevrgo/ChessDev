@@ -4,7 +4,7 @@ import type * as Preset from '@docusaurus/preset-classic';
 
 const config: Config = {
   title: 'ChessDev',
-  tagline: 'Wiki de programación de ajedrez para el engine Oxide',
+  tagline: 'Programming Chess Wiki',
   favicon: 'img/favicon.ico',
 
   // Configuración para GitHub Pages

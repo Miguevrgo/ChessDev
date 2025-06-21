@@ -27,7 +27,122 @@ This is usually slower than generating pseudo-legal moves, as it requires checki
 Either way, pins, en passant and castling will be the hardests parts to get right.
 
 ## Standard moves
-There are some standard moves which really do not require much explanation or advanced techniques to implement, the difficulty lies in the 
-special moves described above and the performance of the generation heavily lies in the implementation of sliding pieces attacks, we will 
-focus this section on these kinds of moves but first, we will cover the standard moves.
+Standard moves don’t require much explanation or advanced techniques. The real challenge lies in the special moves mentioned earlier and optimizing sliding piece attack generation.
 
+We’ll focus this section on those special and performance-critical moves, but first, let’s implement the basic move representation.
+We need a way to store information about each move. While some engines store additional data to assist in move sorting or other heuristics, we'll stick to what is strictly necessary:
+
+We need to store:
+
+- Origin square (2^6 = 64 positions so we will need 6 bits)
+- Destination square (2^6 = 64 positions so we will need 6 bits)
+- Type of Move
+
+For the move type, we will use 4 bits:
+- 2 bits to describe the kind of move (quiet, capture, castling, etc.)
+- 2 additional bits for promotions (Queen, Knight, Rook, Bishop)
+
+We could have used a 3-bit encoding for all 8 special cases (castling, en passant, 4 promotion types),
+but since the compiler will likely align the Move struct to 16 bits anyway, this bit allocation makes it
+easier to distinguish between move categories quickly.
+
+Let's now implement the Move struct:
+
+<Tabs>
+<TabItem value="C++" label="C++">
+
+```cpp showLineNumbers
+#TODO:
+```
+
+</TabItem>
+<TabItem value="rust" label="Rust">
+
+```rust showLineNumbers
+
+#[repr(u8)]
+#[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Debug, Hash)]
+pub enum MoveKind {
+    Quiet = 0b0000,
+    Castle = 0b0001,
+    DoublePush = 0b0010,
+
+    // Promotions have 3rd bit set
+    KnightPromotion = 0b0100,
+    BishopPromotion = 0b0101,
+    RookPromotion = 0b0110,
+    QueenPromotion = 0b0111,
+
+    // Captures have 4th bit set
+    Capture = 0b1000,
+    EnPassant = 0b1001,
+
+    KnightCapPromo = 0b1100,
+    BishopCapPromo = 0b1101,
+    RookCapPromo = 0b1110,
+    QueenCapPromo = 0b1111,
+}
+
+pub struct Move(pub u16);
+
+impl Move {
+    pub fn new(src: Square, dest: Square, kind: MoveKind) -> Self {
+        Self((src.index() as u16) | ((dest.index() as u16) << 6) | ((kind as u16) << 12))
+    }
+
+    pub fn get_source(self) -> Square {
+        Square::new((self.0 & SRC) as usize)
+    }
+
+    pub fn get_dest(self) -> Square {
+        Square::new(((self.0 & DST) >> 6) as usize)
+    }
+
+    pub fn get_type(self) -> MoveKind {
+        match (self.0 & TYPE) >> 12 {
+            0b0000 => MoveKind::Quiet,
+            0b0001 => MoveKind::Castle,
+            0b0010 => MoveKind::DoublePush,
+            0b1000 => MoveKind::Capture,
+            0b1001 => MoveKind::EnPassant,
+
+            0b0100 => MoveKind::KnightPromotion,
+            0b0101 => MoveKind::BishopPromotion,
+            0b0110 => MoveKind::RookPromotion,
+            0b0111 => MoveKind::QueenPromotion,
+
+            0b1100 => MoveKind::KnightCapPromo,
+            0b1101 => MoveKind::BishopCapPromo,
+            0b1110 => MoveKind::RookCapPromo,
+            0b1111 => MoveKind::QueenCapPromo,
+
+            _ => unreachable!(),
+        }
+    }
+}
+
+impl std::fmt::Display for Move {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let s = format!("{}{}", self.get_source(), self.get_dest());
+        let move_type = self.get_type();
+
+        if move_type.is_promotion() {
+            write!(
+                f,
+                "{}{}",
+                s,
+                move_type.get_promotion(Colour::Black).to_char()
+            )
+        } else {
+            write!(f, "{s}")
+        }
+    }
+}
+```
+
+</TabItem>
+</Tabs>
+
+As you can see, we have also defined a MoveKind struct to represent the 4 bits which we are using for move type,
+the order provided before allows us to get the information we need by simply shifting the Move some positions.
+There is also an unnecessary display implementation which comes very handy when debugging

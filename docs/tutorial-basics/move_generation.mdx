@@ -145,4 +145,111 @@ impl std::fmt::Display for Move {
 
 As you can see, we have also defined a MoveKind struct to represent the 4 bits which we are using for move type,
 the order provided before allows us to get the information we need by simply shifting the Move some positions.
-There is also an unnecessary display implementation which comes very handy when debugging
+There is also an unnecessary display implementation which comes very handy when debugging. Now that we have succesfully implemented
+a struct for our moves, we are going to generate them, this time, we will go back to where we defined the board and lets 
+see how we can generate the easier moves, as we said, we are firstly going to generate all the possible moves and then we will filter
+the ones which are completely legal, lets implement in a board method (lets call it pseudo_gen for example) the moves for all types 
+of pieces, of course, we are just generating for the current color pieces so the first thing will be getting the side.
+
+#### Pawns
+As we know, pawns are able to go forward 1 square (2 if they are in starting position) and to capture one square to their front diagonals,
+additionally, they have the en passant rule, which as we said, allows us to move diagonally even though we have a pawn on our side if that
+pawn moved two squares forward the last turn.
+
+To get all pawn movements, we will first have to identify where all paws are, then, we will iterate each one pushing its possible moves to a
+handy structure, you can use an array, a vector or whatever you consider best, however, a vector seems the most reasonable:
+
+
+<Tabs>
+<TabItem value="C++" label="C++">
+
+```cpp showLineNumbers
+// auto Board::generate_pseudo_moves(Colour side) -> std::vector<Move>
+std::size_t side_idx = side as usize;
+BitBoard pawn_bb = pieces[Piece::WP.index()] & self.sides[side_idx];
+
+// Now we iterate over all pawns
+//TODO
+```
+
+</TabItem>
+<TabItem value="rust" label="Rust">
+
+```rust showLineNumbers
+
+/// fn generate_pseudo_moves(&self, side: Colour) -> Vec<Move>
+    let mut moves = Vec::with_capacity(64);
+    let side_idx = side as usize;
+
+    // Now we iterate over all pawns
+    let mut pawn_bb = self.pieces[Piece::WP.index()] & self.sides[side_idx];
+    while pawn_bb != BitBoard::EMPTY {
+        let src = pawn_bb.lsb(); // Least significant Byte
+        moves.extend(all_pawn_moves(
+            src,
+            if side == Colour::White {
+                Piece::WP
+            } else {
+                Piece::BP
+            },
+            self,
+        )); // Pushing each possible move for the current pawn
+        pawn_bb = pawn_bb.pop_bit(src);
+    }
+
+/// pub fn all_pawn_moves(src: Square, piece: Piece, board: &Board) -> Vec<Move>
+    let mut moves = Vec::new();
+    let forward = piece.colour().forward(); // +1 | -1 Depending on color
+
+    let start_rank = BitBoard::START_RANKS[piece.colour() as usize]; // Starting rank bitboard (1's in 2|7 row)
+    let promo_rank = BitBoard::PROMO_RANKS[piece.colour() as usize]; // Promotion rank bitboard
+    let opponent = board.sides[!piece.colour() as usize];
+
+    // If our move dest is promo rank, we are pushing all kinds of promotions
+    if let Some(dest) = src.jump(0, forward) {
+        if promo_rank.get_bit(dest) {
+            moves.push(Move::new(src, dest, MoveKind::QueenPromotion));
+            moves.push(Move::new(src, dest, MoveKind::RookPromotion));
+            moves.push(Move::new(src, dest, MoveKind::BishopPromotion));
+            moves.push(Move::new(src, dest, MoveKind::KnightPromotion));
+        } else {
+            // If it is not a promotion, it is not either a capture so quiet move
+            moves.push(Move::new(src, dest, MoveKind::Quiet));
+        }
+    }
+
+    // Starting row is able to advance two squares
+    if start_rank.get_bit(src) {
+        moves.push(Move::new(
+            src,
+            src.jump(0, 2 * forward).unwrap(),
+            MoveKind::DoublePush,
+        ));
+    }
+
+    // Diagonal checking (capture)
+    for delta in [(-1, forward), (1, forward)] {
+        if let Some(dest) = src.jump(delta.0, delta.1) {
+            if opponent.get_bit(dest) {
+                if promo_rank.get_bit(dest) { // A capture + Promotion is possible
+                    moves.push(Move::new(src, dest, MoveKind::QueenCapPromo));
+                    moves.push(Move::new(src, dest, MoveKind::RookCapPromo));
+                    moves.push(Move::new(src, dest, MoveKind::BishopCapPromo));
+                    moves.push(Move::new(src, dest, MoveKind::KnightCapPromo));
+                } else {
+                    moves.push(Move::new(src, dest, MoveKind::Capture));
+                }
+            } else if board.en_passant == Some(dest) { // If an en_passant can be made in the diagonal
+                let ep_target = dest.jump(0, -forward).expect("Invalid en passant target");
+                if opponent.get_bit(ep_target) {
+                    moves.push(Move::new(src, dest, MoveKind::EnPassant));
+                }
+            }
+        }
+    }
+    moves
+}
+```
+
+</TabItem>
+</Tabs>

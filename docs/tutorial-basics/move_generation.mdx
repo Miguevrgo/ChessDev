@@ -1,6 +1,8 @@
 ---
 sidebar_position: 2
 ---
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
 
 # Move Generation
 
@@ -201,7 +203,7 @@ BitBoard pawn_bb = pieces[Piece::WP.index()] & self.sides[side_idx];
     let mut moves = Vec::new();
     let forward = piece.colour().forward(); // +1 | -1 Depending on color
 
-    let start_rank = BitBoard::START_RANKS[piece.colour() as usize]; // Starting rank bitboard (1's in 2|7 row)
+    let start_rank = BitBoard::START_RANKS[piece.colour() as usize]; // Starting rank bitboard (1s in 2|7 row)
     let promo_rank = BitBoard::PROMO_RANKS[piece.colour() as usize]; // Promotion rank bitboard
     let opponent = board.sides[!piece.colour() as usize];
 
@@ -250,6 +252,5 @@ BitBoard pawn_bb = pieces[Piece::WP.index()] & self.sides[side_idx];
     moves
 }
 ```
-
 </TabItem>
 </Tabs>

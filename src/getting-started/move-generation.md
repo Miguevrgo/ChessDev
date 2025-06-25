@@ -1,9 +1,3 @@
----
-sidebar_position: 2
----
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
-
 # Move Generation
 
 If you have completed and read the Board tutorial, you should have a basic understanding of how to represent a chess board and pieces in code. Now, we will implement the move generation logic for our engine.
@@ -50,17 +44,14 @@ easier to distinguish between move categories quickly.
 
 Let's now implement the Move struct:
 
-<Tabs>
-<TabItem value="C++" label="C++">
 
-```cpp showLineNumbers
+#### C++
+```cpp
 #TODO:
 ```
 
-</TabItem>
-<TabItem value="rust" label="Rust">
-
-```rust showLineNumbers
+#### Rust
+```rust
 
 #[repr(u8)]
 #[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Debug, Hash)]
@@ -142,9 +133,6 @@ impl std::fmt::Display for Move {
 }
 ```
 
-</TabItem>
-</Tabs>
-
 As you can see, we have also defined a MoveKind struct to represent the 4 bits which we are using for move type,
 the order provided before allows us to get the information we need by simply shifting the Move some positions.
 There is also an unnecessary display implementation which comes very handy when debugging. Now that we have succesfully implemented
@@ -162,10 +150,9 @@ To get all pawn movements, we will first have to identify where all paws are, th
 handy structure, you can use an array, a vector or whatever you consider best, however, a vector seems the most reasonable:
 
 
-<Tabs>
-<TabItem value="C++" label="C++">
+#### C++
 
-```cpp showLineNumbers
+```cpp
 // auto Board::generate_pseudo_moves(Colour side) -> std::vector<Move>
 std::size_t side_idx = side as usize;
 BitBoard pawn_bb = pieces[Piece::WP.index()] & self.sides[side_idx];
@@ -174,10 +161,9 @@ BitBoard pawn_bb = pieces[Piece::WP.index()] & self.sides[side_idx];
 //TODO
 ```
 
-</TabItem>
-<TabItem value="rust" label="Rust">
 
-```rust showLineNumbers
+#### Rust
+```rust
 
 /// fn generate_pseudo_moves(&self, side: Colour) -> Vec<Move>
     let mut moves = Vec::with_capacity(64);
@@ -252,5 +238,3 @@ BitBoard pawn_bb = pieces[Piece::WP.index()] & self.sides[side_idx];
     moves
 }
 ```
-</TabItem>
-</Tabs>

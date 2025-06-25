@@ -1,10 +1,3 @@
----
-sidebar_position: 1
----
-
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
-
 # Board Representation
 
 When developing a chess program, an internal board representation is crucial. It's not just for enforcing game rules during play, but also for enabling the search algorithm to simulate moves. There are various approaches we'll discuss, but for now, we'll preview one key point: simply using a matrix of pieces isn't enough.
@@ -23,31 +16,29 @@ There are 6 different types of pieces for each side, so 12 in total. Since one p
 
 ### Enumeration
 
-Enumerating piece types is fine. We often order them from least valuable to most. Here's an example in C++ and Rust:
+Enumerating piece types is fine. We often order them from least valuable to most.
 
-<Tabs>
-<TabItem value="C++" label="C++">
+#### C++
 
-```cpp showLineNumbers
+```cpp
 enum PieceType {
     EMPTY, PAWN, KNIGHT, BISHOP, ROOK, QUEEN, KING,
-}
+};
 
 enum Color {
-    WHITE = 0
+    WHITE = 0,
     BLACK = 1
-}
+};
 
 struct Piece {
     PieceType type;
     Color color;
-}
+};
+
 ```
 
-</TabItem>
-<TabItem value="rust" label="Rust">
-
-```rust showLineNumbers
+#### Rust
+```Rust
 #[derive(Copy, Clone, PartialEq, Eq)]
 pub enum PieceType {
     None,
@@ -71,12 +62,7 @@ pub struct Piece {
     pub color: Color,
 }
 ```
-
-</TabItem>
-</Tabs>
-
 ## Square
-
 A square in chess refers to one of the 64 cells on a standard 8×8 board. Each square may be empty or occupied by a piece. In algebraic notation, squares are named using file (columns a to h) and rank (rows 1 to 8), such as e4 or a1.
 
 Internally, it's common to number squares from 0 to 63. The most popular indexing scheme for bitboards is Little-Endian Rank-File (LERF) mapping, where:
@@ -125,10 +111,10 @@ Let’s now see how we can implement a basic BitBoard in Rust. We'll define the 
 - LSB: Find the least significant bit set (used for iterating over pieces).
 
 We’ll also define a debug-friendly Display implementation for visualizing the bitboard.
-<Tabs>
-<TabItem value="C++" label="C++">
 
-```cpp showLineNumbers
+#### C++
+
+```cpp
 enum class Square : std::uint8_t {
     A1 = 0, B1, C1, D1, E1, F1, G1, H1,
     A2, B2, C2, D2, E2, F2, G2, H2,
@@ -153,21 +139,21 @@ public:
         return bits_ & (1ULL << index(sq));
     }
 
-    [[nodiscard]] constexpr BitBoard set_bit(Square sq) const {
         return BitBoard(bits_ | (1ULL << index(sq)));
-    }
+    [[nodiscard]] constexpr BitBoard set_bit(Square sq) const {
 
-    [[nodiscard]] constexpr BitBoard pop_bit(Square sq) const {
+    }
         return BitBoard(bits_ & ~(1ULL << index(sq)));
+    [[nodiscard]] constexpr BitBoard pop_bit(Square sq) const {
     }
 
-    [[nodiscard]] constexpr int count_bits() const {
         return std::popcount(bits_);
     }
 
-    [[nodiscard]] constexpr Square lsb() const {
         return Square(std::countr_zero(bits_));
+[[nodiscard]] constexpr int count_bits() const {
     }
+[[nodiscard]] constexpr Square lsb() const {
 
     [[nodiscard]] std::string to_string() const {
         std::string result = "  a b c d e f g h\n ┌────────────────┐\n";
@@ -185,18 +171,15 @@ public:
     }
 
     friend std::ostream& operator<<(std::ostream& os, const BitBoard& bb) {
-        return os << bb.to_string();
     }
+return os << bb.to_string();
 
 private:
     std::uint64_t bits_;
 };
 ```
 
-</TabItem>
-<TabItem value="rust" label="Rust">
-
-```rust showLineNumbers
+```rust
 struct BitBoard(u64);
 
 impl BitBoard {
@@ -240,9 +223,6 @@ impl std::fmt::Display for BitBoard {
 }
 ```
 
-</TabItem>
-</Tabs>
-
 **Notes**:
 - Square is assumed to be a struct or enum with a method index() -> usize returning its 0–63 index.
 - You can also implement your own version of count_ones (popcount) using techniques like the HAKMEM algorithm or lookup tables, though the built-in version is already highly optimized in modern CPUs.
@@ -255,10 +235,9 @@ As we have just seen, bitboards are great for representing piece positions, howe
 the side to move, castling rights, en passant square, time control, repetitions, etc. The prefered way to hold this information is to create a struct that contains all the necessary fields, as we can imagine, we are going to call it `Board`, although you can name it whatever you want (Position is quite common too).
 Let's see an example of how we can represent the board state in Rust and C++ and then we will go through each field and its purpose.
 
-<Tabs>
-<TabItem value="C++" label="C++">
 
-```cpp showLineNumbers
+#### C++
+```cpp
 struct Board {
     // We have already seen how we can represent the pieces,
     // Here we use the 12 bitboards approach
@@ -285,10 +264,8 @@ struct Board {
 };
 ```
 
-</TabItem>
-<TabItem value="rust" label="Rust">
-
-```rust showLineNumbers
+#### Rust
+```rust
 struct Board {
     // We have already seen how we can represent the pieces,
     // Here we use the 8 bitboards approach + Piece map
@@ -317,10 +294,7 @@ struct Board {
     // Hash (You can ingore this for now, we will see it quite later)
     //hash: ZobristHash,
 }
-
 ```
-</TabItem>
-</Tabs>
 
 #### Sides
 It is very useful to have a way to quickly check which side is to move, it could be computed from the halfmoves count, but it will 
@@ -340,17 +314,12 @@ Using this enconding, we can easily check whether a side can castle kingside, qu
 the real move generation, we will not just check the castling rights, but also the position of the king and rook, and whether the squares between them are empty or not, or if they are attacked by the opponent's pieces.
 However, this is enough for now to represent the castling rights in a compact way, now, as usual, let's see how we can represent this in Rust and C++:
 
-<Tabs>
-<TabItem value="C++" label="C++">
-
-```cpp showLineNumbers
+```cpp
 #TODO
 ```
 
-</TabItem>
-<TabItem value="rust" label="Rust">
-
-```rust showLineNumbers
+#### Rust
+```rust
 struct CastlingRights(u8);
 
 impl CastlingRights {
@@ -367,8 +336,6 @@ impl CastlingRights {
 }
 
 ```
-</TabItem>
-</Tabs>
 
 ### En Passant
 There is a special rule in chess called en passant, which allows a pawn that has just moved two squares forward from its

@@ -1,7 +1,3 @@
----
-sidebar_position: 1
----
-
 # Introduction
 
 Welcome to **ChessDev**, an open-source technical wiki dedicated to chess engine development. This resource aims to provide a comprehensive and accessible platform for learning chess programming techniques, serving both beginners and experienced developers looking to enhance their own engines, such as **Oxide**.

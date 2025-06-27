@@ -1,5 +1,12 @@
 [book]
-authors = ["Miguevrgo"]
-language = "en"
-src = "src"
 title = "ChessDev"
+language = "en"
+multilingual = false
+
+[output.html]
+default-theme = "dark"
+preferred-dark-theme = "navy"
+site-url = "/ChessDev/"
+
+[build]
+build-dir = "book"

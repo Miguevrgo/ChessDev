@@ -1,0 +1,821 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>ChessDev</title>
+        <meta name="robots" content="noindex">
+
+
+        <!-- Custom HTML head -->
+        
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="favicon.svg">
+        <link rel="shortcut icon" href="favicon.png">
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <link rel="stylesheet" href="css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="highlight.css">
+        <link rel="stylesheet" href="tomorrow-night.css">
+        <link rel="stylesheet" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+    </head>
+    <body class="sidebar-visible no-js">
+    <div id="body-container">
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('light')
+            html.classList.add(theme);
+            var body = document.querySelector('body');
+            body.classList.remove('no-js')
+            body.classList.add('js');
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var body = document.querySelector('body');
+            var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            body.classList.remove('sidebar-visible');
+            body.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded "><a href="introduction.html"><strong aria-hidden="true">1.</strong> Introduction</a></li><li class="chapter-item expanded "><div><strong aria-hidden="true">2.</strong> Getting Started</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="getting-started/board-representation.html"><strong aria-hidden="true">2.1.</strong> Board Representation</a></li><li class="chapter-item expanded "><a href="getting-started/move-generation.html"><strong aria-hidden="true">2.2.</strong> Move Generation</a></li><li class="chapter-item expanded "><a href="getting-started/testing-and-finishing.html"><strong aria-hidden="true">2.3.</strong> Testing and Finishing</a></li></ol></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <!-- Track and set sidebar scroll position -->
+        <script>
+            var sidebarScrollbox = document.querySelector('#sidebar .sidebar-scrollbox');
+            sidebarScrollbox.addEventListener('click', function(e) {
+                if (e.target.tagName === 'A') {
+                    sessionStorage.setItem('sidebar-scroll', sidebarScrollbox.scrollTop);
+                }
+            }, { passive: true });
+            var sidebarScrollTop = sessionStorage.getItem('sidebar-scroll');
+            sessionStorage.removeItem('sidebar-scroll');
+            if (sidebarScrollTop) {
+                // preserve sidebar scroll position when navigating via links within sidebar
+                sidebarScrollbox.scrollTop = sidebarScrollTop;
+            } else {
+                // scroll sidebar to current active section when navigating via "next/previous chapter" buttons
+                var activeSection = document.querySelector('#sidebar .active');
+                if (activeSection) {
+                    activeSection.scrollIntoView({ block: 'center' });
+                }
+            }
+        </script>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">ChessDev</h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="introduction"><a class="header" href="#introduction">Introduction</a></h1>
+<p>Welcome to <strong>ChessDev</strong>, an open-source technical wiki dedicated to chess engine development. This resource aims to provide a comprehensive and accessible platform for learning chess programming techniques, serving both beginners and experienced developers looking to enhance their own engines, such as <strong>Oxide</strong>.</p>
+<h2 id="acknowledgments"><a class="header" href="#acknowledgments">Acknowledgments</a></h2>
+<p>The creation of this wiki owes much to the following resources and communities:</p>
+<ul>
+<li><strong><a href="https://www.chessprogramming.org/">ChessProgramming Wiki</a></strong>: A foundational source of knowledge during the development of Oxide. While its depth on individual topics may vary, it has been an invaluable reference for many, including myself, on this journey.</li>
+<li><strong><a href="https://www.youtube.com/c/SebastianLague">Sebastian Lague</a></strong>: His insightful and engaging video tutorials have brilliantly elucidated key chess programming concepts, making complex topics approachable and entertaining.</li>
+<li><strong>Open-Source Chess Engines</strong>: Projects like Stockfish, Carp, Akimbo, Berserk, and others have generously shared their code, offering real-world examples of advanced techniques that inspire and guide the community.</li>
+</ul>
+<h2 id="purpose-and-scope"><a class="header" href="#purpose-and-scope">Purpose and Scope</a></h2>
+<p>ChessDev seeks to build upon these resources by providing detailed documentation, code examples, and practical guides tailored to the development of <strong>Oxide</strong> and similar engines.</p>
+<h2 id="collaboration"><a class="header" href="#collaboration">Collaboration</a></h2>
+<p>ChessDev is a non-profit, freely accessible resource hosted on GitHub, committed to remaining open and available to all. Contributions are warmly encouraged, whether it’s correcting existing content, adding new topics, translating the wiki, or providing code examples in other programming languages (e.g., beyond Rust/C++). Together, we can create a supportive community, guiding newcomers along a rewarding path in chess programming. Join us by forking the repository at <a href="https://github.com/Miguevrgo/ChessDev">https://github.com/Miguevrgo/ChessDev</a> and submitting pull requests!</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="board-representation"><a class="header" href="#board-representation">Board Representation</a></h1>
+<p>When developing a chess program, an internal board representation is crucial. It's not just for enforcing game rules during play, but also for enabling the search algorithm to simulate moves. There are various approaches we'll discuss, but for now, we'll preview one key point: simply using a matrix of pieces isn't enough.</p>
+<p>We also have to account for some information about the game such as the side to move, castling and en passant rights, etc. There are also lots of different chess board implementations within the same techniques we are going to see. It is up to the programmer to design their own approach with the data considered to make it faster while maintaining reliability or ease of use.</p>
+<p>We'll now discuss some of the board representations, going first through bitboards which are the recommended way that almost all computer chess engines follow. If you don't yet understand why it's better, you can try experimenting with your own approach — it may even be better! However, if you just want something really good out of the box, trust the way, and we'll see together why it's a good idea, even if it's not the most space-efficient approach.</p>
+<h2 id="pieces"><a class="header" href="#pieces">Pieces</a></h2>
+<p>There are various ways to represent the pieces. It also depends on the programming language used. We will not go too much in depth on whether one design is better than another, because there are lots of alternatives each with their own advantages.</p>
+<p>One thing to consider: try to make piece representations branchless and space-efficient when possible. We want to access piece types quite frequently. Although it's not the main bottleneck, we don't recommend an OOP approach with an inherited class for each type of piece.</p>
+<p>There are 6 different types of pieces for each side, so 12 in total. Since one piece only occupies one square at a time, a Nil-piece aka empty square can be useful. For cheaper design, most engines prefer encoding the piece type and color as separate variables. The most straightforward way is using an enumeration.</p>
+<h3 id="enumeration"><a class="header" href="#enumeration">Enumeration</a></h3>
+<p>Enumerating piece types is fine. We often order them from least valuable to most.</p>
+<h4 id="c"><a class="header" href="#c">C++</a></h4>
+<pre><code class="language-cpp">enum PieceType {
+    EMPTY, PAWN, KNIGHT, BISHOP, ROOK, QUEEN, KING,
+};
+
+enum Color {
+    WHITE = 0,
+    BLACK = 1
+};
+
+struct Piece {
+    PieceType type;
+    Color color;
+};
+
+</code></pre>
+<h4 id="rust"><a class="header" href="#rust">Rust</a></h4>
+<pre><code class="language-Rust">#[derive(Copy, Clone, PartialEq, Eq)]
+pub enum PieceType {
+    None,
+    Pawn,
+    Knight,
+    Bishop,
+    Rook,
+    Queen,
+    King,
+}
+
+#[derive(Copy, Clone, PartialEq, Eq)]
+pub enum Color {
+    White,
+    Black,
+}
+
+#[derive(Copy, Clone)]
+pub struct Piece {
+    pub piece_type: PieceType,
+    pub color: Color,
+}
+</code></pre>
+<h2 id="square"><a class="header" href="#square">Square</a></h2>
+<p>A square in chess refers to one of the 64 cells on a standard 8×8 board. Each square may be empty or occupied by a piece. In algebraic notation, squares are named using file (columns a to h) and rank (rows 1 to 8), such as e4 or a1.</p>
+<p>Internally, it's common to number squares from 0 to 63. The most popular indexing scheme for bitboards is Little-Endian Rank-File (LERF) mapping, where:</p>
+<ul>
+<li>Square a1 is index 0 (LSB)</li>
+<li>Square h1 is index 7</li>
+<li>Square a2 is index 8</li>
+<li>...</li>
+<li>Square h8 is index 63 (MSB)</li>
+</ul>
+<p>This order matches how a 64-bit integer maps directly to the board, from least significant bit (LSB) to most significant bit (MSB), left to right, bottom to top.</p>
+<p>A good reference to visualize this mapping: <a href="https://tearth.dev/bitboard-viewer/">Bitboard Viewer</a></p>
+<h2 id="board"><a class="header" href="#board">Board</a></h2>
+<h3 id="bitboards"><a class="header" href="#bitboards">Bitboards</a></h3>
+<p>Bitboards are the standard and recommended way of representing a chess board in modern engines. While not the most space-efficient, they enable extremely fast operations using bitwise logic.
+A bitboard is simply a 64-bit integer (<code>u64</code> in Rust, <code>uint64_t</code> in C++), where each bit corresponds to a square on the board. A bit set to 1 means the square is occupied; 0 means it's empty.</p>
+<p>A natural question arises:</p>
+<ul>
+<li><strong>How do we know which piece is on each square if a bitboard only tells us if a square is occupied?</strong></li>
+</ul>
+<p>There are multiple strategies:</p>
+<ul>
+<li>
+<p><strong>[8 Bitboards]</strong> One effective and compact approach is to use 8 bitboards in total:</p>
+<ul>
+<li>6 bitboards for each piece type (regardless of color):</li>
+<li>2 bitboards for side occupancy:</li>
+</ul>
+<p>With this setup, you can derive the full board state. For example, to get the bitboard of white pawns: <code>bitboards[pawn] | bitboards[white]</code>
+This design is compact and performant. It avoids redundant storage while still allowing fast queries, however, it is not the only possible
+approach:</p>
+</li>
+<li>
+<p><strong>[12 Bitboards]</strong> One bitboard for each piece type and color, additionaly, some engines decide to use another
+two bitboards for side occupancy.</p>
+</li>
+<li>
+<p><strong>[Hybrid approach]</strong> Where we use the bitboards for fast operations + array of pieces for easier access for some operations, this involves
+a bigger size in the end, however, it can prove useful for many of the methods.</p>
+</li>
+</ul>
+<p>Let’s now see how we can implement a basic BitBoard in Rust. We'll define the most common bitboard operations and provide utility methods that are frequently used in chess engines. While there are many valid design choices, the implementation shown below balances clarity, efficiency, and usability.
+<strong>Key Operations:</strong></p>
+<ul>
+<li>Get bit: Check whether a square is set.</li>
+<li>Set bit: Mark a square as occupied.</li>
+<li>Pop bit: Clear a bit (e.g., when a piece moves).</li>
+<li>Count bits: Count how many squares are set (e.g., for population count or mobility).</li>
+<li>LSB: Find the least significant bit set (used for iterating over pieces).</li>
+</ul>
+<p>We’ll also define a debug-friendly Display implementation for visualizing the bitboard.</p>
+<h4 id="c-1"><a class="header" href="#c-1">C++</a></h4>
+<pre><code class="language-cpp">enum class Square : std::uint8_t {
+    A1 = 0, B1, C1, D1, E1, F1, G1, H1,
+    A2, B2, C2, D2, E2, F2, G2, H2,
+    A3, B3, C3, D3, E3, F3, G3, H3,
+    A4, B4, C4, D4, E4, F4, G4, H4,
+    A5, B5, C5, D5, E5, F5, G5, H5,
+    A6, B6, C6, D6, E6, F6, G6, H6,
+    A7, B7, C7, D7, E7, F7, G7, H7,
+    A8, B8, C8, D8, E8, F8, G8, H8
+};
+
+constexpr std::uint8_t index(Square s) {
+    return static_cast&lt;std::uint8_t&gt;(s);
+}
+
+class BitBoard {
+public:
+    constexpr BitBoard() : bits_(0) {}
+    constexpr explicit BitBoard(std::uint64_t bits) : bits_(bits) {}
+
+    [[nodiscard]] constexpr bool get_bit(Square sq) const {
+        return bits_ &amp; (1ULL &lt;&lt; index(sq));
+    }
+
+        return BitBoard(bits_ | (1ULL &lt;&lt; index(sq)));
+    [[nodiscard]] constexpr BitBoard set_bit(Square sq) const {
+
+    }
+        return BitBoard(bits_ &amp; ~(1ULL &lt;&lt; index(sq)));
+    [[nodiscard]] constexpr BitBoard pop_bit(Square sq) const {
+    }
+
+        return std::popcount(bits_);
+    }
+
+        return Square(std::countr_zero(bits_));
+[[nodiscard]] constexpr int count_bits() const {
+    }
+[[nodiscard]] constexpr Square lsb() const {
+
+    [[nodiscard]] std::string to_string() const {
+        std::string result = "  a b c d e f g h\n ┌────────────────┐\n";
+        for (int rank = 7; rank &gt;= 0; --rank) {
+            result += std::to_string(rank + 1) + "│";
+            for (int file = 0; file &lt; 8; ++file) {
+                int idx = rank * 8 + file;
+                bool bit = (bits_ &gt;&gt; idx) &amp; 1;
+                result += bit ? "1 " : "0 ";
+            }
+            result += "│\n";
+        }
+        result += " └────────────────┘\n";
+        return result;
+    }
+
+    friend std::ostream&amp; operator&lt;&lt;(std::ostream&amp; os, const BitBoard&amp; bb) {
+    }
+return os &lt;&lt; bb.to_string();
+
+private:
+    std::uint64_t bits_;
+};
+</code></pre>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>struct BitBoard(u64);
+
+impl BitBoard {
+    pub fn get_bit(self, square: Square) -&gt; bool {
+        self.0 &amp; (1u64 &lt;&lt; square.index()) != 0
+    }
+
+    pub fn set_bit(self, square: Square) -&gt; Self {
+        Self(self.0 | (1u64 &lt;&lt; square.index()))
+    }
+
+    pub fn pop_bit(self, square: Square) -&gt; Self {
+        Self(self.0 &amp; !(1u64 &lt;&lt; square.index()))
+    }
+
+    pub fn count_bits(self) -&gt; u32 {
+        self.0.count_ones()
+    }
+
+    pub fn lsb(self) -&gt; Square {
+        Square::new(self.0.trailing_zeros() as usize)
+    }
+}
+
+/// Optional method which can be useful when debugging
+impl std::fmt::Display for BitBoard {
+    fn fmt(&amp;self, f: &amp;mut std::fmt::Formatter&lt;'_&gt;) -&gt; std::fmt::Result {
+        writeln!(f, "  a b c d e f g h")?;
+        writeln!(f, " ┌────────────────┐")?;
+        for rank in (0..8).rev() {
+            write!(f, "{}│", rank + 1)?;
+            for file in 0..8 {
+                let index = rank * 8 + file;
+                let bit = (self.0 &gt;&gt; index) &amp; 1;
+                write!(f, "{} ", if bit == 1 { "1" } else { "0" })?;
+            }
+            writeln!(f, "│")?;
+        }
+        writeln!(f, " └────────────────┘")
+    }
+}
+<span class="boring">}</span></code></pre></pre>
+<p><strong>Notes</strong>:</p>
+<ul>
+<li>Square is assumed to be a struct or enum with a method index() -&gt; usize returning its 0–63 index.</li>
+<li>You can also implement your own version of count_ones (popcount) using techniques like the HAKMEM algorithm or lookup tables, though the built-in version is already highly optimized in modern CPUs.</li>
+<li>Advanced methods like pop_lsb() (clear and return index) and iteration over bits can also be added as needed.</li>
+</ul>
+<p>#TODO: Include 10x12 boards, 0x88,etc</p>
+<h3 id="board-state"><a class="header" href="#board-state">Board State</a></h3>
+<p>As we have just seen, bitboards are great for representing piece positions, however, they are not enough to represent the full state of a chess game. We also have to track additional information inherent to the game, such as
+the side to move, castling rights, en passant square, time control, repetitions, etc. The prefered way to hold this information is to create a struct that contains all the necessary fields, as we can imagine, we are going to call it <code>Board</code>, although you can name it whatever you want (Position is quite common too).
+Let's see an example of how we can represent the board state in Rust and C++ and then we will go through each field and its purpose.</p>
+<h4 id="c-2"><a class="header" href="#c-2">C++</a></h4>
+<pre><code class="language-cpp">struct Board {
+    // We have already seen how we can represent the pieces,
+    // Here we use the 12 bitboards approach
+    std::array&lt;BitBoard, 12&gt; pieces;
+
+    // Now the information about the game
+
+    // Side to move (Color can be an enum {White, Black} or similar)
+    Color side_to_move;
+
+    // Castling rights stored in a compact way, using an u8 is fine for now
+    CastlingRights castling_rights;
+
+    // En passant square, if any
+    std::optional&lt;Square&gt; en_passant_square;
+
+    // Halfmoves
+    // Chess is limited to less than 5900 moves, using 16 bits would be safer
+    // (256 is a reasonable limit for most games but not all)
+    uint8_t halfmoves = 0;
+
+    // Hash (You can ingore this for now, we will see it quite later)
+    ZobristHash hash;
+};
+</code></pre>
+<h4 id="rust-1"><a class="header" href="#rust-1">Rust</a></h4>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>struct Board {
+    // We have already seen how we can represent the pieces,
+    // Here we use the 8 bitboards approach + Piece map
+    pieces: [BitBoard; 6],
+    sides: [BitBoard; 2],
+
+    // If we had defined empty pieces, we would not need Option&lt;&gt;
+    piece_map: [Option&lt;Piece&gt;; Square::COUNT], // Square::COUNT is 64
+
+    // Now the information about the game
+
+    // Side to move (Color can be an enum {White, Black} or similar)
+    side: Color,
+
+    // Castling rights stored in a compact way, using an u8 is fine for now
+    castling_rights: CastlingRights, // u8
+
+    // En passant square, if any
+    en_passant: Option&lt;Square&gt;,
+
+    // Halfmoves
+    // Chess is limited to less than 5900 moves, using u16 would be safer
+    // (256 is a reasonable limit for most games but not all)
+    halfmoves: u8,
+
+    // Hash (You can ingore this for now, we will see it quite later)
+    //hash: ZobristHash,
+}
+<span class="boring">}</span></code></pre></pre>
+<h4 id="sides"><a class="header" href="#sides">Sides</a></h4>
+<p>It is very useful to have a way to quickly check which side is to move, it could be computed from the halfmoves count, but it will
+be very handy to have it stored in the board, it also does not take much space, so we can use a simple data type which is able to hold
+two values, such as an enum or a boolean. In the example above, we use an enum <code>Color</code> which can be either <code>White</code> or <code>Black</code>.</p>
+<h3 id="castlingrights"><a class="header" href="#castlingrights">CastlingRights</a></h3>
+<p>For us to generate legal moves, we have to follow the standard chess rules, which include castling rights, this includes tracking whether
+each side can castle kingside or queenside. We can use a simple <code>u8</code> to store this information, where each bit represents a castling right, this way, we can list
+the four possible castling rights as follows:</p>
+<ul>
+<li>0b0001: White can castle kingside</li>
+<li>0b0010: White can castle queenside</li>
+<li>0b0100: Black can castle kingside</li>
+<li>0b1000: Black can castle queenside</li>
+</ul>
+<p>Using this enconding, we can easily check whether a side can castle kingside, queenside or even both by using bitwise operations. For
+the real move generation, we will not just check the castling rights, but also the position of the king and rook, and whether the squares between them are empty or not, or if they are attacked by the opponent's pieces.
+However, this is enough for now to represent the castling rights in a compact way, now, as usual, let's see how we can represent this in Rust and C++:</p>
+<pre><code class="language-cpp">#TODO
+</code></pre>
+<h4 id="rust-2"><a class="header" href="#rust-2">Rust</a></h4>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>struct CastlingRights(u8);
+
+impl CastlingRights {
+    const WK: u8 = 0b0001; // White can castle kingside
+    const WQ: u8 = 0b0010; // White can castle queenside
+    const BK: u8 = 0b0100; // Black can castle kingside
+    const BQ: u8 = 0b1000; // Black can castle queenside
+    const ALL: u8 = Self::WK | Self::WQ | Self::BK | Self::BQ;
+    const NONE: u8 = 0b0000; // No castling rights
+
+    const fn index(self) -&gt; usize {
+        self.0 as usize
+    }
+}
+
+<span class="boring">}</span></code></pre></pre>
+<h3 id="en-passant"><a class="header" href="#en-passant">En Passant</a></h3>
+<p>There is a special rule in chess called en passant, which allows a pawn that has just moved two squares forward from its
+starting position to be captured by an opponent's pawn as if it had only moved one square. To implement this rule, we have to track every time a
+pawn moves two squares forward, and we can do this by storing the square where the en passant capture can occur.</p>
+<h3 id="halfmoves"><a class="header" href="#halfmoves">Halfmoves</a></h3>
+<p>In game theory, it is quite common to notate the number of halfmoves made in a game, which means the number of turns made by both players.
+This variable, which is often called <code>ply</code> in chess engines, represents the number of moves made by both players without a capture or a pawn move.
+It is used to determine whether the 50-move rule applies, which states that if no capture or pawn move has been made in the last 50 moves, the game can be declared a draw.</p>
+<h3 id="hashing"><a class="header" href="#hashing">Hashing</a></h3>
+<p>We will not go deep into hashing yet as it is not necessary, however, its just a way to identify a board position by a number, this way we can use
+some advanced techniques such as transposition tables, which allow us to store previously computed positions and avoid recomputing them, we can also use it to detect repetitions and draw conditions.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="move-generation"><a class="header" href="#move-generation">Move Generation</a></h1>
+<p>If you have completed and read the Board tutorial, you should have a basic understanding of how to represent a chess board and pieces in code. Now, we will implement the move generation logic for our engine.
+There are many different ways to implement move generation, here, we will discuss many and so it is up to you to choose the one that fits your needs best or you understand best.</p>
+<p>This implementation heavily depends on the board representation, as it is quite the standard to use bitboards, we will assume you are using them as well, however, if you are not, I hope you can still follow along and adapt the code to your needs.
+Either way, move generation is the part of the board implementation which is going to take the most time while searching, coding, and debugging, so it is important to get it right. We will later discuss how to check whether or not
+your engine is generating the correct moves, however, if you follow the code examples and the explanations, you should be able to implement a working move generation logic.</p>
+<h2 id="legality"><a class="header" href="#legality">Legality</a></h2>
+<p>There are two main approaches to move generation: generating all legal moves and generating pseudo-legal moves for later check.</p>
+<h3 id="pseudo-legal-moves"><a class="header" href="#pseudo-legal-moves">Pseudo-legal moves</a></h3>
+<p>In pseudo-legal move generation, we generate all moves which are possible according to the movement rules of each piece,
+without checking whether or not the move would leave the king in check. This is the most common approach and is usually faster
+than generating legal moves, as it does not require checking for checks after each move.</p>
+<h3 id="legal-moves"><a class="header" href="#legal-moves">Legal moves</a></h3>
+<p>In legal move generation, we generate only moves which do not leave the king in check.
+This is usually slower than generating pseudo-legal moves, as it requires checking for checks after each move.</p>
+<p>Either way, pins, en passant and castling will be the hardests parts to get right.</p>
+<h2 id="standard-moves"><a class="header" href="#standard-moves">Standard moves</a></h2>
+<p>Standard moves don’t require much explanation or advanced techniques. The real challenge lies in the special moves mentioned earlier and optimizing sliding piece attack generation.</p>
+<p>We’ll focus this section on those special and performance-critical moves, but first, let’s implement the basic move representation.
+We need a way to store information about each move. While some engines store additional data to assist in move sorting or other heuristics, we'll stick to what is strictly necessary:</p>
+<p>We need to store:</p>
+<ul>
+<li>Origin square (2^6 = 64 positions so we will need 6 bits)</li>
+<li>Destination square (2^6 = 64 positions so we will need 6 bits)</li>
+<li>Type of Move</li>
+</ul>
+<p>For the move type, we will use 4 bits:</p>
+<ul>
+<li>2 bits to describe the kind of move (quiet, capture, castling, etc.)</li>
+<li>2 additional bits for promotions (Queen, Knight, Rook, Bishop)</li>
+</ul>
+<p>We could have used a 3-bit encoding for all 8 special cases (castling, en passant, 4 promotion types),
+but since the compiler will likely align the Move struct to 16 bits anyway, this bit allocation makes it
+easier to distinguish between move categories quickly.</p>
+<p>Let's now implement the Move struct:</p>
+<h4 id="c-3"><a class="header" href="#c-3">C++</a></h4>
+<pre><code class="language-cpp">#TODO:
+</code></pre>
+<h4 id="rust-3"><a class="header" href="#rust-3">Rust</a></h4>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span>
+<span class="boring">fn main() {
+</span>#[repr(u8)]
+#[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Debug, Hash)]
+pub enum MoveKind {
+    Quiet = 0b0000,
+    Castle = 0b0001,
+    DoublePush = 0b0010,
+
+    // Promotions have 3rd bit set
+    KnightPromotion = 0b0100,
+    BishopPromotion = 0b0101,
+    RookPromotion = 0b0110,
+    QueenPromotion = 0b0111,
+
+    // Captures have 4th bit set
+    Capture = 0b1000,
+    EnPassant = 0b1001,
+
+    KnightCapPromo = 0b1100,
+    BishopCapPromo = 0b1101,
+    RookCapPromo = 0b1110,
+    QueenCapPromo = 0b1111,
+}
+
+pub struct Move(pub u16);
+
+impl Move {
+    pub fn new(src: Square, dest: Square, kind: MoveKind) -&gt; Self {
+        Self((src.index() as u16) | ((dest.index() as u16) &lt;&lt; 6) | ((kind as u16) &lt;&lt; 12))
+    }
+
+    pub fn get_source(self) -&gt; Square {
+        Square::new((self.0 &amp; SRC) as usize)
+    }
+
+    pub fn get_dest(self) -&gt; Square {
+        Square::new(((self.0 &amp; DST) &gt;&gt; 6) as usize)
+    }
+
+    pub fn get_type(self) -&gt; MoveKind {
+        match (self.0 &amp; TYPE) &gt;&gt; 12 {
+            0b0000 =&gt; MoveKind::Quiet,
+            0b0001 =&gt; MoveKind::Castle,
+            0b0010 =&gt; MoveKind::DoublePush,
+            0b1000 =&gt; MoveKind::Capture,
+            0b1001 =&gt; MoveKind::EnPassant,
+
+            0b0100 =&gt; MoveKind::KnightPromotion,
+            0b0101 =&gt; MoveKind::BishopPromotion,
+            0b0110 =&gt; MoveKind::RookPromotion,
+            0b0111 =&gt; MoveKind::QueenPromotion,
+
+            0b1100 =&gt; MoveKind::KnightCapPromo,
+            0b1101 =&gt; MoveKind::BishopCapPromo,
+            0b1110 =&gt; MoveKind::RookCapPromo,
+            0b1111 =&gt; MoveKind::QueenCapPromo,
+
+            _ =&gt; unreachable!(),
+        }
+    }
+}
+
+impl std::fmt::Display for Move {
+    fn fmt(&amp;self, f: &amp;mut std::fmt::Formatter&lt;'_&gt;) -&gt; std::fmt::Result {
+        let s = format!("{}{}", self.get_source(), self.get_dest());
+        let move_type = self.get_type();
+
+        if move_type.is_promotion() {
+            write!(
+                f,
+                "{}{}",
+                s,
+                move_type.get_promotion(Colour::Black).to_char()
+            )
+        } else {
+            write!(f, "{s}")
+        }
+    }
+}
+<span class="boring">}</span></code></pre></pre>
+<p>As you can see, we have also defined a MoveKind struct to represent the 4 bits which we are using for move type,
+the order provided before allows us to get the information we need by simply shifting the Move some positions.
+There is also an unnecessary display implementation which comes very handy when debugging. Now that we have succesfully implemented
+a struct for our moves, we are going to generate them, this time, we will go back to where we defined the board and lets
+see how we can generate the easier moves, as we said, we are firstly going to generate all the possible moves and then we will filter
+the ones which are completely legal, lets implement in a board method (lets call it pseudo_gen for example) the moves for all types
+of pieces, of course, we are just generating for the current color pieces so the first thing will be getting the side.</p>
+<h4 id="pawns"><a class="header" href="#pawns">Pawns</a></h4>
+<p>As we know, pawns are able to go forward 1 square (2 if they are in starting position) and to capture one square to their front diagonals,
+additionally, they have the en passant rule, which as we said, allows us to move diagonally even though we have a pawn on our side if that
+pawn moved two squares forward the last turn.</p>
+<p>To get all pawn movements, we will first have to identify where all paws are, then, we will iterate each one pushing its possible moves to a
+handy structure, you can use an array, a vector or whatever you consider best, however, a vector seems the most reasonable:</p>
+<h4 id="c-4"><a class="header" href="#c-4">C++</a></h4>
+<pre><code class="language-cpp">// auto Board::generate_pseudo_moves(Colour side) -&gt; std::vector&lt;Move&gt;
+std::size_t side_idx = side as usize;
+BitBoard pawn_bb = pieces[Piece::WP.index()] &amp; self.sides[side_idx];
+
+// Now we iterate over all pawns
+//TODO
+</code></pre>
+<h4 id="rust-4"><a class="header" href="#rust-4">Rust</a></h4>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span>
+<span class="boring">fn main() {
+</span>/// fn generate_pseudo_moves(&amp;self, side: Colour) -&gt; Vec&lt;Move&gt;
+    let mut moves = Vec::with_capacity(64);
+    let side_idx = side as usize;
+
+    // Now we iterate over all pawns
+    let mut pawn_bb = self.pieces[Piece::WP.index()] &amp; self.sides[side_idx];
+    while pawn_bb != BitBoard::EMPTY {
+        let src = pawn_bb.lsb(); // Least significant Byte
+        moves.extend(all_pawn_moves(
+            src,
+            if side == Colour::White {
+                Piece::WP
+            } else {
+                Piece::BP
+            },
+            self,
+        )); // Pushing each possible move for the current pawn
+        pawn_bb = pawn_bb.pop_bit(src);
+    }
+
+/// pub fn all_pawn_moves(src: Square, piece: Piece, board: &amp;Board) -&gt; Vec&lt;Move&gt;
+    let mut moves = Vec::new();
+    let forward = piece.colour().forward(); // +1 | -1 Depending on color
+
+    let start_rank = BitBoard::START_RANKS[piece.colour() as usize]; // Starting rank bitboard (1s in 2|7 row)
+    let promo_rank = BitBoard::PROMO_RANKS[piece.colour() as usize]; // Promotion rank bitboard
+    let opponent = board.sides[!piece.colour() as usize];
+
+    // If our move dest is promo rank, we are pushing all kinds of promotions
+    if let Some(dest) = src.jump(0, forward) {
+        if promo_rank.get_bit(dest) {
+            moves.push(Move::new(src, dest, MoveKind::QueenPromotion));
+            moves.push(Move::new(src, dest, MoveKind::RookPromotion));
+            moves.push(Move::new(src, dest, MoveKind::BishopPromotion));
+            moves.push(Move::new(src, dest, MoveKind::KnightPromotion));
+        } else {
+            // If it is not a promotion, it is not either a capture so quiet move
+            moves.push(Move::new(src, dest, MoveKind::Quiet));
+        }
+    }
+
+    // Starting row is able to advance two squares
+    if start_rank.get_bit(src) {
+        moves.push(Move::new(
+            src,
+            src.jump(0, 2 * forward).unwrap(),
+            MoveKind::DoublePush,
+        ));
+    }
+
+    // Diagonal checking (capture)
+    for delta in [(-1, forward), (1, forward)] {
+        if let Some(dest) = src.jump(delta.0, delta.1) {
+            if opponent.get_bit(dest) {
+                if promo_rank.get_bit(dest) { // A capture + Promotion is possible
+                    moves.push(Move::new(src, dest, MoveKind::QueenCapPromo));
+                    moves.push(Move::new(src, dest, MoveKind::RookCapPromo));
+                    moves.push(Move::new(src, dest, MoveKind::BishopCapPromo));
+                    moves.push(Move::new(src, dest, MoveKind::KnightCapPromo));
+                } else {
+                    moves.push(Move::new(src, dest, MoveKind::Capture));
+                }
+            } else if board.en_passant == Some(dest) { // If an en_passant can be made in the diagonal
+                let ep_target = dest.jump(0, -forward).expect("Invalid en passant target");
+                if opponent.get_bit(ep_target) {
+                    moves.push(Move::new(src, dest, MoveKind::EnPassant));
+                }
+            }
+        }
+    }
+    moves
+}
+<span class="boring">}</span></code></pre></pre>
+<p>As you can see the code is quite boiler plate, however, if you read it you will see its just the modularity of generating the pseudo moves all together for each piece (for now there is only the pawn) and pushing them to the structure of choice so that we can use them later. For the pawn generation, its just the promotions (which we have to generate all possible ones even though in the search we will usually just promote to queen), the simple and quiet pawn push, the double push if the pawn is in the starting rank and the diagonally captures (which also have to include promotions if the rank is promotion) and en passant respectively. We generate all possible pawn moves based on the position of pieces and then in the caller we filter the ones which are really valid. For the en passant move, we are storing on the board every time a double move is made, the square where it can be done. Let's now extend the pseudo move generation for the knight and king moves, which are the last ones which do not require sliding logic:</p>
+<h3 id="king"><a class="header" href="#king">King</a></h3>
+<p>King's Movement is really simple, despite the Castling logic, which is quite tricky, we just have to add the in-board moves for all 8 possible positions surrounding the
+king, as we are pseudo generating yet, we will push both Capture and Quiet Move to the vector, as we have said, this can be changed so that every pushed move is already valid, or at least is pseudo valid and just has to check whether it leaves the king on check or not. After this, you can leave the method with the first part for now but I will also explain the Castling logic for anyone interested in doing it now:</p>
+<h4 id="c-5"><a class="header" href="#c-5">C++</a></h4>
+<pre><code class="language-cpp">#TODO
+</code></pre>
+<h4 id="rust-5"><a class="header" href="#rust-5">Rust</a></h4>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>pub fn all_king_moves(src: Square) -&gt; Vec&lt;Move&gt; {
+    let mut moves = Vec::with_capacity(4); // Conservative approach (2,4,8) are fine
+    // KING_OFFSETS its just [0,1],[1,1],[1,0],[1,-1], etc
+    for &amp;(file_delta, rank_delta) in &amp;KING_OFFSETS {
+        if let Some(dest) = src.jump(file_delta, rank_delta) {
+            moves.push(Move::new(src, dest, MoveKind::Quiet));
+            moves.push(Move::new(src, dest, MoveKind::Capture));
+        }
+    }
+
+    // Now for the Castling logic
+    if src.to_board() &amp; BitBoard::KING_START_POS != BitBoard::EMPTY {
+        moves.push(Move::new(
+            src,
+            Square::from_row_col(src.row(), 6),
+            MoveKind::Castle,
+        ));
+        moves.push(Move::new(
+            src,
+            Square::from_row_col(src.row(), 2),
+            MoveKind::Castle,
+        ));
+    }
+
+    moves
+}
+
+<span class="boring">}</span></code></pre></pre>
+<h3 id="castling"><a class="header" href="#castling">Castling</a></h3>
+<p>We have already said that any board representation needed a way to store the current castling state, this means knowing which color can castle and if it is able for both, none or one side. The CastlingRights struct has already been presented, yet, it may not be very clear how we are interacting with it, for the most part, the make_move method will be handling updating the state of the Castling rights so for now we just have to use them:</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="testing-and-finishing"><a class="header" href="#testing-and-finishing">Testing and Finishing</a></h1>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="elasticlunr.min.js"></script>
+        <script src="mark.min.js"></script>
+        <script src="searcher.js"></script>
+
+        <script src="clipboard.min.js"></script>
+        <script src="highlight.js"></script>
+        <script src="book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+        <script>
+        window.addEventListener('load', function() {
+            window.setTimeout(window.print, 100);
+        });
+        </script>
+
+    </div>
+    </body>
+</html>

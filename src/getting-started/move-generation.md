@@ -238,3 +238,46 @@ BitBoard pawn_bb = pieces[Piece::WP.index()] & self.sides[side_idx];
     moves
 }
 ```
+As you can see the code is quite boiler plate, however, if you read it you will see its just the modularity of generating the pseudo moves all together for each piece (for now there is only the pawn) and pushing them to the structure of choice so that we can use them later. For the pawn generation, its just the promotions (which we have to generate all possible ones even though in the search we will usually just promote to queen), the simple and quiet pawn push, the double push if the pawn is in the starting rank and the diagonally captures (which also have to include promotions if the rank is promotion) and en passant respectively. We generate all possible pawn moves based on the position of pieces and then in the caller we filter the ones which are really valid. For the en passant move, we are storing on the board every time a double move is made, the square where it can be done. Let's now extend the pseudo move generation for the knight and king moves, which are the last ones which do not require sliding logic:
+
+### King
+King's Movement is really simple, despite the Castling logic, which is quite tricky, we just have to add the in-board moves for all 8 possible positions surrounding the 
+king, as we are pseudo generating yet, we will push both Capture and Quiet Move to the vector, as we have said, this can be changed so that every pushed move is already valid, or at least is pseudo valid and just has to check whether it leaves the king on check or not. After this, you can leave the method with the first part for now but I will also explain the Castling logic for anyone interested in doing it now:
+
+#### C++
+```cpp
+#TODO
+```
+#### Rust
+```rust
+pub fn all_king_moves(src: Square) -> Vec<Move> {
+    let mut moves = Vec::with_capacity(4); // Conservative approach (2,4,8) are fine
+    // KING_OFFSETS its just [0,1],[1,1],[1,0],[1,-1], etc
+    for &(file_delta, rank_delta) in &KING_OFFSETS {
+        if let Some(dest) = src.jump(file_delta, rank_delta) {
+            moves.push(Move::new(src, dest, MoveKind::Quiet));
+            moves.push(Move::new(src, dest, MoveKind::Capture));
+        }
+    }
+
+    // Now for the Castling logic
+    if src.to_board() & BitBoard::KING_START_POS != BitBoard::EMPTY {
+        moves.push(Move::new(
+            src,
+            Square::from_row_col(src.row(), 6),
+            MoveKind::Castle,
+        ));
+        moves.push(Move::new(
+            src,
+            Square::from_row_col(src.row(), 2),
+            MoveKind::Castle,
+        ));
+    }
+
+    moves
+}
+
+```
+### Castling
+We have already said that any board representation needed a way to store the current castling state, this means knowing which color can castle and if it is able for both, none or one side. The CastlingRights struct has already been presented, yet, it may not be very clear how we are interacting with it, for the most part, the make_move method will be handling updating the state of the Castling rights so for now we just have to use them:
+

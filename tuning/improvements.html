@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Introduction - ChessDev</title>
+        <title>Improvements - ChessDev</title>
 
 
         <!-- Custom HTML head -->
@@ -12,21 +12,21 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="theme-color" content="#ffffff">
 
-        <link rel="icon" href="favicon.svg">
-        <link rel="shortcut icon" href="favicon.png">
-        <link rel="stylesheet" href="css/variables.css">
-        <link rel="stylesheet" href="css/general.css">
-        <link rel="stylesheet" href="css/chrome.css">
-        <link rel="stylesheet" href="css/print.css" media="print">
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
 
         <!-- Fonts -->
-        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
-        <link rel="stylesheet" href="fonts/fonts.css">
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
 
         <!-- Highlight.js Stylesheets -->
-        <link rel="stylesheet" href="highlight.css">
-        <link rel="stylesheet" href="tomorrow-night.css">
-        <link rel="stylesheet" href="ayu-highlight.css">
+        <link rel="stylesheet" href="../highlight.css">
+        <link rel="stylesheet" href="../tomorrow-night.css">
+        <link rel="stylesheet" href="../ayu-highlight.css">
 
         <!-- Custom theme stylesheets -->
 
@@ -35,7 +35,7 @@
     <div id="body-container">
         <!-- Provide site root to javascript -->
         <script>
-            var path_to_root = "";
+            var path_to_root = "../";
             var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "dark";
         </script>
 
@@ -88,7 +88,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded "><a href="introduction.html" class="active"><strong aria-hidden="true">1.</strong> Introduction</a></li><li class="chapter-item expanded "><div><strong aria-hidden="true">2.</strong> Getting Started</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="getting-started/board-representation.html"><strong aria-hidden="true">2.1.</strong> Board Representation</a></li><li class="chapter-item expanded "><a href="getting-started/move-generation.html"><strong aria-hidden="true">2.2.</strong> Move Generation</a></li><li class="chapter-item expanded "><a href="getting-started/testing-and-finishing.html"><strong aria-hidden="true">2.3.</strong> Testing and Finishing</a></li></ol></li><li class="chapter-item expanded "><div><strong aria-hidden="true">3.</strong> Tuning</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="tuning/improvements.html"><strong aria-hidden="true">3.1.</strong> Improvements</a></li></ol></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded "><a href="../introduction.html"><strong aria-hidden="true">1.</strong> Introduction</a></li><li class="chapter-item expanded "><div><strong aria-hidden="true">2.</strong> Getting Started</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../getting-started/board-representation.html"><strong aria-hidden="true">2.1.</strong> Board Representation</a></li><li class="chapter-item expanded "><a href="../getting-started/move-generation.html"><strong aria-hidden="true">2.2.</strong> Move Generation</a></li><li class="chapter-item expanded "><a href="../getting-started/testing-and-finishing.html"><strong aria-hidden="true">2.3.</strong> Testing and Finishing</a></li></ol></li><li class="chapter-item expanded "><div><strong aria-hidden="true">3.</strong> Tuning</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../tuning/improvements.html" class="active"><strong aria-hidden="true">3.1.</strong> Improvements</a></li></ol></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle">
                 <div class="sidebar-resize-indicator"></div>
@@ -144,7 +144,7 @@
                     <h1 class="menu-title">ChessDev</h1>
 
                     <div class="right-buttons">
-                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
                             <i id="print-button" class="fa fa-print"></i>
                         </a>
 
@@ -173,28 +173,28 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1 id="introduction"><a class="header" href="#introduction">Introduction</a></h1>
-<p>Welcome to <strong>ChessDev</strong>, an open-source technical wiki dedicated to chess engine development. This resource aims to provide a comprehensive and accessible platform for learning chess programming techniques, serving both beginners and experienced developers looking to enhance their own engines, such as <strong>Oxide</strong>.</p>
-<h2 id="acknowledgments"><a class="header" href="#acknowledgments">Acknowledgments</a></h2>
-<p>The creation of this wiki owes much to the following resources and communities:</p>
-<ul>
-<li><strong><a href="https://www.chessprogramming.org/">ChessProgramming Wiki</a></strong>: A foundational source of knowledge during the development of Oxide. While its depth on individual topics may vary, it has been an invaluable reference for many, including myself, on this journey.</li>
-<li><strong><a href="https://www.youtube.com/c/SebastianLague">Sebastian Lague</a></strong>: His insightful and engaging video tutorials have brilliantly elucidated key chess programming concepts, making complex topics approachable and entertaining.</li>
-<li><strong>Open-Source Chess Engines</strong>: Projects like Stockfish, Carp, Akimbo, Berserk, and others have generously shared their code, offering real-world examples of advanced techniques that inspire and guide the community.</li>
-</ul>
-<h2 id="purpose-and-scope"><a class="header" href="#purpose-and-scope">Purpose and Scope</a></h2>
-<p>ChessDev seeks to build upon these resources by providing detailed documentation, code examples, and practical guides tailored to the development of <strong>Oxide</strong> and similar engines.</p>
-<h2 id="collaboration"><a class="header" href="#collaboration">Collaboration</a></h2>
-<p>ChessDev is a non-profit, freely accessible resource hosted on GitHub, committed to remaining open and available to all. Contributions are warmly encouraged, whether it’s correcting existing content, adding new topics, translating the wiki, or providing code examples in other programming languages (e.g., beyond Rust/C++). Together, we can create a supportive community, guiding newcomers along a rewarding path in chess programming. Join us by forking the repository at <a href="https://github.com/Miguevrgo/ChessDev">https://github.com/Miguevrgo/ChessDev</a> and submitting pull requests!</p>
+                        <h1 id="improvements"><a class="header" href="#improvements">Improvements</a></h1>
+<p>There are various ways to test whether some change has improved the engine or not, you can maybe think of testing by measuring
+time to get to certain depth or puzzles solved correctly, however, as easy as this methods are, they are only useful when the difference is really notable or we are testing various improvements fast that we want to get an approximation to seriously test them later.</p>
+<p>How you should really test a change is by playing some games (the more the better) between the original state and the change,
+this can be done via a script or a GUI which usually allows this kind of behaviour. How would we know whether it is better, equal or worse, well, you will end up with a number for the Wins/Draws/Loses, you can intuit it will be good to have more wins than losses, however, how much wins do we need to get to a conclusion, even more, what if we want to know how much better is the new patch, well, statistics come to help so that we are certain of our conclusion, we will even get an ELO difference which is usually included in the new patch changelog. There are various methods, various time controls, we will first explain tolerance and then we will show the most straight forward and used one.</p>
+<h2 id="tolerance"><a class="header" href="#tolerance">Tolerance</a></h2>
+<p>All conclusions have to be made with a tolerance of error, not just the ELO difference but whether or not our <strong>hypothesis</strong>
+is correct. For the tolerance there are lots of distributions (T of Student i.e) and values, the most used tolerance
+is for a value of 0.05 which means 95% certainty of the conclusion. Depending on the method, differences and number of games
+it will need some different results.</p>
+<h2 id="sprt-sequential-probability-ratio-test"><a class="header" href="#sprt-sequential-probability-ratio-test">SPRT (Sequential Probability Ratio Test)</a></h2>
+<p>It is a Sequential hypothesis testing method, virtually, all top engines use it today one way or another, here we will
+show how to easily do it in our machine using fast chess, which supports pentanomial statistics and its fast and easy to use.</p>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-
-                            <a rel="next prefetch" href="getting-started/board-representation.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
-                                <i class="fa fa-angle-right"></i>
+                            <a rel="prev" href="../getting-started/testing-and-finishing.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
                             </a>
+
 
                         <div style="clear: both"></div>
                     </nav>
@@ -202,10 +202,10 @@
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-
-                    <a rel="next prefetch" href="getting-started/board-representation.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
-                        <i class="fa fa-angle-right"></i>
+                    <a rel="prev" href="../getting-started/testing-and-finishing.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
                     </a>
+
             </nav>
 
         </div>
@@ -218,13 +218,13 @@
         </script>
 
 
-        <script src="elasticlunr.min.js"></script>
-        <script src="mark.min.js"></script>
-        <script src="searcher.js"></script>
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+        <script src="../searcher.js"></script>
 
-        <script src="clipboard.min.js"></script>
-        <script src="highlight.js"></script>
-        <script src="book.js"></script>
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
 
         <!-- Custom JS scripts -->
 

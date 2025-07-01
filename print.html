@@ -89,7 +89,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded "><a href="introduction.html"><strong aria-hidden="true">1.</strong> Introduction</a></li><li class="chapter-item expanded "><div><strong aria-hidden="true">2.</strong> Getting Started</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="getting-started/board-representation.html"><strong aria-hidden="true">2.1.</strong> Board Representation</a></li><li class="chapter-item expanded "><a href="getting-started/move-generation.html"><strong aria-hidden="true">2.2.</strong> Move Generation</a></li><li class="chapter-item expanded "><a href="getting-started/testing-and-finishing.html"><strong aria-hidden="true">2.3.</strong> Testing and Finishing</a></li></ol></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded "><a href="introduction.html"><strong aria-hidden="true">1.</strong> Introduction</a></li><li class="chapter-item expanded "><div><strong aria-hidden="true">2.</strong> Getting Started</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="getting-started/board-representation.html"><strong aria-hidden="true">2.1.</strong> Board Representation</a></li><li class="chapter-item expanded "><a href="getting-started/move-generation.html"><strong aria-hidden="true">2.2.</strong> Move Generation</a></li><li class="chapter-item expanded "><a href="getting-started/testing-and-finishing.html"><strong aria-hidden="true">2.3.</strong> Testing and Finishing</a></li></ol></li><li class="chapter-item expanded "><div><strong aria-hidden="true">3.</strong> Tuning</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="tuning/improvements.html"><strong aria-hidden="true">3.1.</strong> Improvements</a></li></ol></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle">
                 <div class="sidebar-resize-indicator"></div>
@@ -774,6 +774,19 @@ king, as we are pseudo generating yet, we will push both Capture and Quiet Move 
 <h3 id="castling"><a class="header" href="#castling">Castling</a></h3>
 <p>We have already said that any board representation needed a way to store the current castling state, this means knowing which color can castle and if it is able for both, none or one side. The CastlingRights struct has already been presented, yet, it may not be very clear how we are interacting with it, for the most part, the make_move method will be handling updating the state of the Castling rights so for now we just have to use them:</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="testing-and-finishing"><a class="header" href="#testing-and-finishing">Testing and Finishing</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="improvements"><a class="header" href="#improvements">Improvements</a></h1>
+<p>There are various ways to test whether some change has improved the engine or not, you can maybe think of testing by measuring
+time to get to certain depth or puzzles solved correctly, however, as easy as this methods are, they are only useful when the difference is really notable or we are testing various improvements fast that we want to get an approximation to seriously test them later.</p>
+<p>How you should really test a change is by playing some games (the more the better) between the original state and the change,
+this can be done via a script or a GUI which usually allows this kind of behaviour. How would we know whether it is better, equal or worse, well, you will end up with a number for the Wins/Draws/Loses, you can intuit it will be good to have more wins than losses, however, how much wins do we need to get to a conclusion, even more, what if we want to know how much better is the new patch, well, statistics come to help so that we are certain of our conclusion, we will even get an ELO difference which is usually included in the new patch changelog. There are various methods, various time controls, we will first explain tolerance and then we will show the most straight forward and used one.</p>
+<h2 id="tolerance"><a class="header" href="#tolerance">Tolerance</a></h2>
+<p>All conclusions have to be made with a tolerance of error, not just the ELO difference but whether or not our <strong>hypothesis</strong>
+is correct. For the tolerance there are lots of distributions (T of Student i.e) and values, the most used tolerance
+is for a value of 0.05 which means 95% certainty of the conclusion. Depending on the method, differences and number of games
+it will need some different results.</p>
+<h2 id="sprt-sequential-probability-ratio-test"><a class="header" href="#sprt-sequential-probability-ratio-test">SPRT (Sequential Probability Ratio Test)</a></h2>
+<p>It is a Sequential hypothesis testing method, virtually, all top engines use it today one way or another, here we will
+show how to easily do it in our machine using fast chess, which supports pentanomial statistics and its fast and easy to use.</p>
 
                     </main>
 

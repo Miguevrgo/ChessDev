@@ -642,6 +642,8 @@ a struct for our moves, we are going to generate them, this time, we will go bac
 see how we can generate the easier moves, as we said, we are firstly going to generate all the possible moves and then we will filter
 the ones which are completely legal, lets implement in a board method (lets call it pseudo_gen for example) the moves for all types
 of pieces, of course, we are just generating for the current color pieces so the first thing will be getting the side.</p>
+<p>First, where are going to see how to implement a basic move gen for each piece, we will later present magic bitboards + obstruction difference,
+which allows us to generate them much much faster.</p>
 <h4 id="pawns"><a class="header" href="#pawns">Pawns</a></h4>
 <p>As we know, pawns are able to go forward 1 square (2 if they are in starting position) and to capture one square to their front diagonals,
 additionally, they have the en passant rule, which as we said, allows us to move diagonally even though we have a pawn on our side if that
@@ -770,9 +772,13 @@ king, as we are pseudo generating yet, we will push both Capture and Quiet Move 
     moves
 }
 
+
+
 <span class="boring">}</span></code></pre></pre>
 <h3 id="castling"><a class="header" href="#castling">Castling</a></h3>
 <p>We have already said that any board representation needed a way to store the current castling state, this means knowing which color can castle and if it is able for both, none or one side. The CastlingRights struct has already been presented, yet, it may not be very clear how we are interacting with it, for the most part, the make_move method will be handling updating the state of the Castling rights so for now we just have to use them:</p>
+<h2 id="obstruction-difference"><a class="header" href="#obstruction-difference">Obstruction Difference</a></h2>
+<p>Whilst the de facto standard for movegen is magic bitboards, I will first present Obstruction difference as the performance gap is not too wide and this approach is easier to understand and implement. The technique is better understood if we show each step in a board, then we will also present an enhancement over the standard proposal</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="testing-and-finishing"><a class="header" href="#testing-and-finishing">Testing and Finishing</a></h1>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="improvements"><a class="header" href="#improvements">Improvements</a></h1>
 <p>There are various ways to test whether some change has improved the engine or not, you can maybe think of testing by measuring

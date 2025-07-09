@@ -141,6 +141,9 @@ see how we can generate the easier moves, as we said, we are firstly going to ge
 the ones which are completely legal, lets implement in a board method (lets call it pseudo_gen for example) the moves for all types 
 of pieces, of course, we are just generating for the current color pieces so the first thing will be getting the side.
 
+First, where are going to see how to implement a basic move gen for each piece, we will later present magic bitboards + obstruction difference,
+which allows us to generate them much much faster.
+
 #### Pawns
 As we know, pawns are able to go forward 1 square (2 if they are in starting position) and to capture one square to their front diagonals,
 additionally, they have the en passant rule, which as we said, allows us to move diagonally even though we have a pawn on our side if that
@@ -277,7 +280,12 @@ pub fn all_king_moves(src: Square) -> Vec<Move> {
     moves
 }
 
+
+
 ```
 ### Castling
 We have already said that any board representation needed a way to store the current castling state, this means knowing which color can castle and if it is able for both, none or one side. The CastlingRights struct has already been presented, yet, it may not be very clear how we are interacting with it, for the most part, the make_move method will be handling updating the state of the Castling rights so for now we just have to use them:
+
+## Obstruction Difference
+Whilst the de facto standard for movegen is magic bitboards, I will first present Obstruction difference as the performance gap is not too wide and this approach is easier to understand and implement. The technique is better understood if we show each step in a board, then we will also present an enhancement over the standard proposal
 
